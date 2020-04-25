@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ImportGroup Condition=" '$(MSBuildProjectExtension)' != '.shproj' ">
+    <Import Project="..\build\resource.targets" />
+    <Import Project="..\build\file-version.targets" />
+    <Import Project="..\build\nuget.targets" />
+  </ImportGroup>
+
+  <Target Name="GetTargetPath" Outputs="@(TargetPath)">
+
+    <PropertyGroup>
+      <TargetFrameworks Condition=" '$(TargetFrameworks)' == '' ">$(TargetFramework)</TargetFrameworks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_TargetFrameworks Include="$(TargetFrameworks)" />
+    </ItemGroup>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="GetTargetPathForTfm"
+             Properties="Configuration=$(Configuration);TargetFramework=%(_TargetFrameworks.Identity)"
+             UnloadProjectsOnCompletion="true"
+             BuildInParallel="true">
+      <Output TaskParameter="TargetOutputs" ItemName="TargetPath" />
+    </MSBuild>
+
+  </Target>
+
+  <Target Name="GetTargetPathForTfm" Outputs="$(TargetPath)" />
+
+</Project>
